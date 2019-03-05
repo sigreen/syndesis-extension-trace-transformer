@@ -2,7 +2,7 @@
 
 This project details a Syndesis Extension which can transform any file using Trace Transformer.
 
-The extension exposes three configurable fields:
+The extension exposes two configurable fields:
 - **PROJECT_KEY** The name of the transformer project e.g. com.redhat.flatfile-to-xml
 - **OPERATION_NAME** The name of the exposed service operation e.g. MapHoldingsToXML
 
@@ -13,7 +13,7 @@ The required runtime Trace library files can be sourced from your Trace Transfor
 1. currencylib-1.0.11
 2. transformer-runtime-skinny-3.6.9-SNAPSHOT
 
-Request both Trace library files and copy them to the `/lib` directory in your `syndesis-extension-trace-transformer` project.
+You can [request(https://www.tracefinancial.com/transformer) both Trace library files and copy them to the `/lib` directory in your `syndesis-extension-trace-transformer` project.
 
 Via the command-line, install both Trace JAR files to your local Maven repository using the following commands:
 
@@ -87,10 +87,53 @@ To create the step extension, compile the project using:
 mvn clean package
 ```
 
-Import the `target/trace-transformer-extension-1.0.0.jar` JAR file into Syndesis as a Step Extension.  Build a Syndesis Integration to test out your map.  An easy integration is AMQ -> Trace Transformer -> AMQ.  Here is sample test data:
+### Step 5: Import the extension into Syndesis
+
+1. Start your OpenShift cluster (or Minishift) and login to Syndesis
+
+1. Click on *Customizations* menu, then the *Extensions* tab, then click **Import Extension**
+
+    ![design-login](img/5-2-import-extension.png "Import Extension")
+    
+1. Select the `trace-transformer-extension-1.0.0.jar` in the `/target` directory
+
+    ![design-login](img/5-3-select-extension.png "Select Extension")
+    
+1. Click the *Import Extension* button.  The *Trace Transformer Extension* record should appear.
+
+### Step 6: Build an integration
+
+Build out at integration that tests your new extension.  The easiest flow is to consume a message from an AMQ broker, transform the message, then output it to the system log. It is assumed you have already pre-configured an AMQ broker *Connection* in syndesis.
+
+1. Navigate to the *Integrations* menu, then click on the *Create Integration* button.
+
+1. Select the *AMQ Broker* connection, and set the *Destination Name* and *Destination Type* to the queue that want to consume from.
+
+    ![design-login](img/6-2-setup-amq.png "Setup AMQ")
+    
+1. For the destination, select the *Simple Logger*, and then select **Log Body** and **Log Headers**.
+
+    ![design-login](img/6-3-simple-logger.png "Simple Logger")
+    
+1. Add a step in between both Connections, then select the **Transform Body** extension that you just created.
+
+    ![design-login](img/6-4-select-transform-body.png "Select Transform Body")
+
+1.  Enter the *Project Key* value using the same project key from Step 1.1. Do the same for the *Operation Name* (found in Step 1.5).  Click **Done**.
+
+    ![design-login](img/6-5-project-key.png "Select Project Key")
+
+1. Click Publish, then give the Integration a name e.g. `Transform-Flatfile-to-XML.  Click **Publish**.
+
+1. Once the integration has published and started-up correctly (check the logs), you can try sending a message via the AMQ broker screen.  The test file I use is:
 
 ```
 ABGH1456900ABC001GB01849356841500.0000000    GBP4.5600000  2003123120030812ABC123456720030712ABB134287920030710ABA547968020030708ABA658748920030707AAB1346849
 ```
 
-![iPaaS screenshot](images/screenshot.png)
+1.  If the transformation was successful, you should see the following XML in the OpenShift log:
+
+```
+{"exchange":"i-L_D8I5L2LXwUUep0Hydz","step":"null","id":"i-L_D8IYB2LXwUUep0Hyfz","message":"Exchange[ExchangePattern: InOnly, Headers: {breadcrumbId=i-L_D8I5L2LXwUUep0Hydz, JMSCorrelationID=null, JMSCorrelationIDAsBytes=null, JMSDeliveryMode=2, JMSDestination=queue://IncomingFlatFile, JMSExpiration=0, JMSMessageID=ID:broker-amq-1-hts64-40592-1551792493011-4:1:1:1:1, JMSPriority=0, JMSRedelivered=false, JMSReplyTo=null, JMSTimestamp=1551794254178, JMSType=null, JMSXGroupID=null, JMSXUserID=null, newOperationName=MapHoldingsToXMLmajor, operationName=MapHoldingsToXML, projectKey=com.redhat.holdings-transform, Syndesis.FLOW_ID=-L_D6lT2LjFFKh6ez2Eb, Syndesis.STEP_ID=-L_D6niSLjFFKh6ez2Eb, Syndesis.STEP_TRACKER_ID=i-L_D8IYB2LXwUUep0Hyfz, TraceTransformerMTypeConfig=MessageDefinitionGroups/Tutorial/Messages/Holding, TraceTransformerMTypeGroup=Tutorial, TraceTransformerMTypeKind=MSGD, TraceTransformerMTypeName=Holding, TraceTransformerOperationName=com.redhat.holdings-transform.MapHoldingsToXML}, BodyType: byte[], Body: <?xml version=\"1.0\"?><Holding xmlns=\"C:\\temp\\tutorial\\tutorial.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">     <AccountRef>ABGH1456900</AccountRef>    <RespCode>ABC</RespCode>    <PortfolioRef>ABGH14/ABC</PortfolioRef>    <HoldingDetail>        <ISIN>GB0184935684</ISIN>        <Quantity>1500.0</Quantity>        <Currency>GBP</Currency>        <AvgeCost>4.56</AvgeCost>        <LastTrade>2003-12-31</LastTrade>        <TradeDetails>            <TradeDate>2003-08-12</TradeDate>            <TradeRef>ABC1234567</TradeRef>        </TradeDetails>        <TradeDetails>            <TradeDate>2003-07-12</TradeDate>            <TradeRef>ABB1342879</TradeRef>        </TradeDetails>        <TradeDetails>            <TradeDate>2003-07-10</TradeDate>            <TradeRef>ABA5479680</TradeRef>        </TradeDetails>        <TradeDetails>            <TradeDate>2003-07-08</TradeDate>            <TradeRef>ABA6587489</TradeRef>        </TradeDetails>        <TradeDetails>            <TradeDate>2003-07-0
+7</TradeDate>            <TradeRef>AAB1346849</TradeRef>        </TradeDetails>    </HoldingDetail></Holding>]"}
+```

@@ -127,9 +127,9 @@ Build out at integration that tests your new extension.  The easiest flow is to 
 
 1. Once the integration has published and started-up correctly (check the logs), you can try sending a message via the AMQ broker screen.  The test file I use is:
 
-	```bash
-	ABGH1456900ABC001GB01849356841500.0000000    GBP4.5600000  2003123120030812ABC123456720030712ABB134287920030710ABA547968020030708ABA658748920030707AAB1346849
-	```
+    ```bash
+    ABGH1456900ABC001GB01849356841500.0000000    GBP4.5600000  2003123120030812ABC123456720030712ABB134287920030710ABA547968020030708ABA658748920030707AAB1346849
+    ```
 
 1.  If the transformation was successful, you should see the following XML in the OpenShift log:
 

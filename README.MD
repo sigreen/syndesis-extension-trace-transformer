@@ -13,7 +13,7 @@ The required runtime Trace library files can be sourced from your Trace Transfor
 1. currencylib-1.0.11
 2. transformer-runtime-skinny-3.6.9-SNAPSHOT
 
-You can [request(https://www.tracefinancial.com/transformer) both Trace library files and copy them to the `/lib` directory in your `syndesis-extension-trace-transformer` project.
+You can [request](https://www.tracefinancial.com/transformer) both Trace library files and copy them to the `/lib` directory in your `syndesis-extension-trace-transformer` project.
 
 Via the command-line, install both Trace JAR files to your local Maven repository using the following commands:
 

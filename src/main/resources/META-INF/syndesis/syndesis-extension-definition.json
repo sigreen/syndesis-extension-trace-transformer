@@ -1,0 +1,52 @@
+{
+  "schemaVersion" : "v1",
+  "name" : "Trace Transformer Extension",
+  "extensionId" : "fuse.online.extension.trace.transformer",
+  "version" : "1.0.0",
+  "actions" : [ {
+    "id" : "Transform-body",
+    "name" : "Transform Body",
+    "description" : "Transform one-to-one document mapping",
+    "descriptor" : {
+      "kind" : "ENDPOINT",
+      "entrypoint" : "direct:transform-document",
+      "inputDataShape" : {
+        "kind" : "any"
+      },
+      "outputDataShape" : {
+        "kind" : "any"
+      },
+      "propertyDefinitionSteps" : [ {
+        "description" : "Define your Project Key Name",
+        "name" : "PROJECT_KEY",
+        "properties" : {
+          "projectKey" : {
+            "kind" : "parameter",
+            "displayName" : "Project Key",
+            "type" : "string",
+            "javaType" : "String",
+            "description" : "The Trace Transformer Project Key Name"
+          }
+        }
+      },
+	  {
+        "description" : "Define your Operation Name",
+        "name" : "OPERATION_NAME",
+        "properties" : {
+          "operationName" : {
+            "kind" : "parameter",
+            "displayName" : "Operation Name",
+            "type" : "string",
+            "javaType" : "String",
+            "description" : "The Trace Transformer Operation Name"
+          }
+        }
+      }      
+       ],
+      "resource" : "classpath:META-INF/syndesis/extensions/transformer-action.xml"
+    },
+    "tags" : [ "xml" ],
+    "actionType" : "step"
+  } ],
+  "extensionType" : "Steps"
+}

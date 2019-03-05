@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes id="routes-1" xmlns="http://camel.apache.org/schema/spring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <route id="transform-document">
+        <!--         <to id="_to1" uri="txfrmr:com.redhat.mappings-service/MapHoldingsToXML"/> -->
+        <from uri="direct:transform-document"/>
+        <toD uri="txfrmr:${header.projectKey}/${header.operationName}"/>
+    </route>
+</routes>

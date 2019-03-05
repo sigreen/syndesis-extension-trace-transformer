@@ -1,0 +1,38 @@
+{
+  "schemaVersion" : "v1",
+  "name" : "Trace Transformer Extension",
+  "extensionId" : "fuse.online.extension.trace.transformer",
+  "version" : "1.0.0",
+  "actions" : [ {
+    "id" : "Log-body",
+    "name" : "Log Body",
+    "description" : "A simple xml Body Log with a prefix",
+    "descriptor" : {
+      "kind" : "ENDPOINT",
+      "entrypoint" : "direct:log-xml",
+      "inputDataShape" : {
+        "kind" : "any"
+      },
+      "outputDataShape" : {
+        "kind" : "any"
+      },
+      "propertyDefinitionSteps" : [ {
+        "description" : "Define your Log message",
+        "name" : "Log Body",
+        "properties" : {
+          "prefix" : {
+            "kind" : "parameter",
+            "displayName" : "Log Prefix",
+            "type" : "string",
+            "javaType" : "String",
+            "description" : "The Log body prefix message"
+          }
+        }
+      } ],
+      "resource" : "classpath:META-INF/syndesis/extensions/log-body-action.xml"
+    },
+    "tags" : [ "xml" ],
+    "actionType" : "step"
+  } ],
+  "extensionType" : "Steps"
+}
